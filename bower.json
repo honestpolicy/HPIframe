@@ -1,0 +1,25 @@
+{
+  "name": "hp-iframe",
+  "version": "0.0.0",
+  "authors": [
+    "blainekasten <blainekasten@gmail.com>"
+  ],
+  "description": "Desired way of loading the HonestPolicy Iframe",
+  "main": "dist/hp-iframe.js",
+  "homepage": "https://github.com/honestpolicy/hp-iframe",
+  "keywords": [
+    "iframe",
+    "HonestPolicy",
+    "HoPo",
+    "Iframe",
+    "script"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
