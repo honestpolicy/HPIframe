@@ -1,68 +1,74 @@
-# HP Link
+# HPIframe
 
-Link for HP partners
+The HonesPolicy Iframe gives you access to providing your users with
+easy, instant quotes and an opportunity to connect with you, or one of
+HonestPolicy's various partners
 
 ## Getting Started
 
-Download the [jQuery plugin][min] and place hp-link[.min].js and the hp-link[.min].css in the appropriate places.
+We recommend using Bower to install the script to your local server.
 
-[min]: https://github.com/colevoss/hpLink/tree/master/dist
+`bower install hp-iframe`
 
-###In your web page:
-After including jquery, hp-link[.min].js and hp-link[.min].css place "_$.hpLink()_" inside a document.ready function somehwere in your javascripts.
+Then simply include the script in your page:
 
-Then add a hp-link data attribute to the button or link that will initialize HP Link modal. The data-hp-link attribute will need to include the following attributes:
-* type: [button, ad-static, ad-targeted]
-* name: _This can be any unique identifier for that button._
-* desc: _**Optional**_ anything that describes the button. Position on page, usage, etc.
+    <head>
+        <script src="/path/to/hp-iframe.js"></script>
+    </head>
 
-The value of the data-hp-link attribute needs to be in the form of a JSON string. eg: '{"type": "button", "name": "find-auto-insurance"}'
-```html
-<head>
-  <script src="jquery.js"></script>
-  <script src="dist/hp-link.min.js"></script>
-  <link rel="stylesheet" href="dist/hp-link.min.css" type="text/css" />
-</head>
-<body>
-  <script>
-    $(function(){
-      $.hpLink({
-        line: 'auto',
-        key: '<Your HP Key>'
-      });
-    });
-  </script>
-  <a href='#' data-hp-link></a>
-  <button data-hp-link='{"type": "button", "name": "find-auto-insurance"}'></button>
-  <a href='#' data-hp-link='{"type": "ad-static", "name": "top-banner-nebraska-1", "desc": "Banner at top of page"}'>
-    <img src='{img-source}' width='400'/>
-  </a>
-</body>
-```
-This should prepare the button to display the HP Link modal when clicked.
+You will need to put an iframe in the body of your page, wherever you
+would like it to be. It must have the id of `hopo-iframe`
 
-## Documentation
-### Customization
-You can determin how the HP Link modal enters the screen by setting parameters such as:
-_*defaults in bold italics_
-* entrace: [slide, _**fade**_]
-* startPlacement: [_**top**_, left]
-* speed: [_**fast**_, slow, 100-1000]
+    <iframe id='hopo-iframe'></iframe>
 
-You will also need to include two attributes to indicate the line of business and your HonestPolicy Lead Source key.
-* line: [home, auto, health, life]
-* key: (Key provided to you by HonestPolicy)
-```javascript
-  $(function(){
-    $.hpLink({
-      line: 'home',
-      key: '<your HP Key>',
-      entrance: 'slide', // Modal slides into view
-      startPlacement: 'left', // Modal slides from the left side of the screen.
-      speed: 500, // Medium speed.
-    })
-  });
-```
+Lastly then you will set up your script to initalize the HPIframe. It
+will look something like this (not the id of the script tag, very
+important):
 
-### How It Works
-When the button with the hp-link data attribute is clicked, the user will be directed to Honest Policy partners after appropriate modals are presented.
+    <script id='iframe'>
+        var iframe = new Iframe
+        iframe.authToken = "my-auth-token";
+        iframe.urlParams = "custom=parameters&to=modify&the=iframe"
+        iframe.load()
+    </script>
+
+## API
+
+The `Iframe` object has a few different options, here we'll outline
+them.
+
+
+#### Iframe.prototype.authToken
+Required.
+Type: String
+
+This is the authorization token provided by HonestPolicy. Without this
+you will not have access to the Iframe.
+
+
+#### Iframe.prototype.urlParams
+Optional.
+Type: String
+
+This needs to be valid GET url parameters. Please follow the
+documentation for what parameters are valid to pass.
+
+
+#### Iframe.prototype.automaticallyResize
+Optional.
+Type: Boolean
+Default: false
+
+Our Iframe can automatically resize the actualy iframe element to equal
+the height of its contents if this is set to true. If False, it will be
+your job to set the height of the iframe, and scrollbars will appear if
+the iframe's content is bigger than the frame.
+
+
+#### Iframe.prototype.load
+Required.
+Type: Function
+
+This is the last thing you will do for the `Iframe` object. Any
+modifications/calls after this point will be ignored. This handles the
+loading of the iframe and all other magic.
