@@ -39,25 +39,39 @@ them.
 
 
 #### Iframe.prototype.authToken
-Required.
-Type: String
+* Required.
+* Type: String
 
 This is the authorization token provided by HonestPolicy. Without this
 you will not have access to the Iframe.
 
 
 #### Iframe.prototype.urlParams
-Optional.
-Type: String
+* Optional.
+* Type: String
 
 This needs to be valid GET url parameters. Please follow the
 documentation for what parameters are valid to pass.
 
 
+#### Iframe.prototype.ensureMobileMeta
+* Type: Boolean
+* Default: true
+
+This script will make sure that your page is properly set up for mobile viewers by ensuring that you have the proper viewport meta tag in the head. If you do not want this, or it is affecting the layout of the page poorly you can turn this off by setting it to false. Additionally, if the script finds that you already have a viewport meta, it will not try to inject another. It will simply use yours.
+
+
+#### Iframe.prototype.viewportContent
+* Type: String
+* Default: "width=device-width, initial-scale=1"
+
+This is the content of the viewport meta. You can set it to something else if you would like it to react differently. Or you can just put your own meta in your DOM markup.
+
+
 #### Iframe.prototype.automaticallyResize
-Optional.
-Type: Boolean
-Default: false
+* Optional.
+* Type: Boolean
+* Default: false
 
 Our Iframe can automatically resize the actualy iframe element to equal
 the height of its contents if this is set to true. If False, it will be
@@ -66,8 +80,8 @@ the iframe's content is bigger than the frame.
 
 
 #### Iframe.prototype.load
-Required.
-Type: Function
+* Required.
+* Type: Function
 
 This is the last thing you will do for the `Iframe` object. Any
 modifications/calls after this point will be ignored. This handles the
