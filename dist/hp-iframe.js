@@ -1,15 +1,16 @@
 /**
  * hp-iframe 
  * @version v0.0.0 
- * @link https://github.com/honestpolicy/hp-iframe 
+ * @link https://github.com/honestpolicy/HPIframe.git 
  * @license MIT 
  */ 
 
 ;(function(window){
   var __iframe;
 
+
   if (!window.console){
-    var console = {};
+    window.console = {};
     
   }
 
@@ -73,6 +74,16 @@
 
 
   /*
+   * This is the default viewport meta tag content we use.
+   * It gives the best Iframe experience so far discovered. However, users
+   * may adjust this if they want their viewport meta to have a different
+   * effect
+   */
+
+  Iframe.prototype.viewportContent = "width=device-width, initial-scale=1";
+
+
+  /*
    * An object of `on` syntaxed keys to functions. For example
    * On page changes, an onPageChange function is attempted to be called
    *
@@ -110,12 +121,17 @@
     var iframeScript = document.getElementById('iframe'),
         self = this, called;
 
+    // Make sure we have the correct meta data for mobile sites
+    if ( this.ensureMobileMeta ) ensureMobileMeta();
+
     // Load the iframe when the dom is ready
     function onDomReady(){
       var iframe;
 
       called = true;
       iframe = document.getElementById('hopo-iframe');
+
+      if (self.automaticResize) iframe.setAttribute('scrolling', 'no');
 
       // Throw error if iframe doesnt exist in DOM
       if (!iframe) {
@@ -172,6 +188,32 @@
     } else {
       hook = __iframe.runtime['on' + e.data.hookName];
       if (hook) hook(e.data.argument1, e.data.argument2, e.data.argument3, e.data.argument4);
+    }
+  }
+
+
+  /*
+   * This makes sure that the HTML page hosting the HP Iframe has the correct
+   * meta data to work correclty on mobile
+   *
+   * The implementor can opt out of this by setting 
+   *    ```javascript
+   *       iframe.ensureMobileMeta = false;
+   *    ```
+   */
+
+  function ensureMobileMeta(){
+    var foundMeta, meta;
+
+    foundMeta = document.querySelector('meta[name="viewport"]');
+
+    // No meta exists, so we must create one
+    if (foundMeta === null) {
+      meta = document.createElement('meta');
+      meta.name = 'viewport';
+      meta.content = __iframe.viewportContent;
+
+      document.querySelector('head').appendChild(meta);
     }
   }
 
