@@ -86,3 +86,19 @@ the iframe's content is bigger than the frame.
 This is the last thing you will do for the `Iframe` object. Any
 modifications/calls after this point will be ignored. This handles the
 loading of the iframe and all other magic.
+
+
+#### Iframe.prototype.runtime
+* Type: Object
+
+This runtime object allows you to bind to specific events that occur in the iframe. Those events are:
+
+    onChoosenQuote(carrierName, carrierRate)
+    onPageChange()
+    onIframeLoaded()
+
+This is an ever growing list. If you have specific events that you would like to tie into, open an issue and describe the need and we can work on building it in. The way you utilize this is by defining sets on the `runtime` object that map to a function. For example:
+
+    iframe.runtime.onPageChange = function(){ /* respond to page changes */ };
+    
+
