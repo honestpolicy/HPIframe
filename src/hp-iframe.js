@@ -1,5 +1,5 @@
 ;(function(window){
-  var __iframe;
+  var __iframe, Iframe;
 
 
   if (!window.console){
@@ -22,7 +22,9 @@
 
     iframe = document.getElementById('hopo-iframe');
 
-    if (height === null || height < 200 || height > 3000) height = 1000;
+    if (height === null || height < 200 || height > 3000) {
+      height = 1000;
+    }
 
     iframe.style.height = (height + "px");
   }
@@ -43,7 +45,7 @@
    *
    */
 
-  window.Iframe = function() { __iframe = this; };
+  Iframe = function() { __iframe = this; };
 
 
   /*
@@ -115,7 +117,9 @@
         self = this, called;
 
     // Make sure we have the correct meta data for mobile sites
-    if ( this.ensureMobileMeta ) ensureMobileMeta();
+    if ( this.ensureMobileMeta ) {
+      ensureMobileMeta();
+    }
 
     // Load the iframe when the dom is ready
     function onDomReady(){
@@ -124,7 +128,9 @@
       called = true;
       iframe = document.getElementById('hopo-iframe');
 
-      if (self.automaticResize) iframe.setAttribute('scrolling', 'no');
+      if (self.automaticResize) {
+        iframe.setAttribute('scrolling', 'no');
+      }
 
       // Throw error if iframe doesnt exist in DOM
       if (!iframe) {
@@ -145,16 +151,51 @@
         iframe.src = "https://www.honestpolicy.com/iframe/widget?auth_token=" + self.authToken + "&" + self.urlParams + "&post_size=" + self.automaticResize;
       }
 
-      if (iframeScript.parentNode) iframeScript.parentNode.removeChild(iframeScript);
-      if (window.addEventListener) window.addEventListener('message', resolveMessage, false);
-      else window.attachEvent('onmessage', resolveMessage);
+      // Remove iframe script
+      if (iframeScript.parentNode) {
+        iframeScript.parentNode.removeChild(iframeScript);
+      }
+
+
+      // Listen for messages from the iframe
+      if (window.addEventListener) {
+        window.addEventListener('message', resolveMessage, false);
+      } else {
+        window.attachEvent('onmessage', resolveMessage);
+      }
+
+      watchResizeAndRequestIframeHeight();
     }
 
 
     // When dom is ready it will fire the above function
-    if ( document.addEventListener ) { document.addEventListener( "DOMContentLoaded", onDomReady, false ); } else if ( document.attachEvent ) { var isFrame; try { isFrame = window.frameElement !== null; } catch(e) {}
-      if ( document.documentElement.doScroll && !isFrame ) { var tryScroll = function(){ if (called) return; try { document.documentElement.doScroll("left"); onDomReady(); } catch(e) { setTimeout(tryScroll, 10); } }; tryScroll(); }
-      document.attachEvent("onreadystatechange", function(){ if ( document.readyState === "complete" ) { onDomReady(); } });
+    if (document.addEventListener) {
+      document.addEventListener( "DOMContentLoaded", onDomReady, false );
+    } else if (document.attachEvent) {
+      var isFrame; 
+      try { 
+        isFrame = window.frameElement !== null;
+      } catch(e) {}
+
+      if (document.documentElement.doScroll && !isFrame) {
+        var tryScroll = function(){ 
+          if (called) {
+            return;
+          }
+          try {
+            document.documentElement.doScroll("left");
+            onDomReady();
+          } catch(e) {
+            setTimeout(tryScroll, 10);
+          }
+        };
+        tryScroll();
+      }
+      document.attachEvent("onreadystatechange", function(){ 
+        if ( document.readyState === "complete" ) { 
+          onDomReady();
+        }
+      });
     }
 
   };
@@ -171,16 +212,19 @@
   function resolveMessage(e){
     var height;
 
-    if (e.data === null || e.data === '') return;
+    if (e.data === null || e.data === '') {
+      return;
+    }
 
     height = parseInt(e.data) + 80;
 
     if (__iframe.automaticResize && height > 0){
       updateIframeSize(height);
-
     } else {
       hook = __iframe.runtime['on' + e.data.hookName];
-      if (hook) hook(e.data.argument1, e.data.argument2, e.data.argument3, e.data.argument4);
+      if (hook) {
+        hook(e.data.argument1, e.data.argument2, e.data.argument3, e.data.argument4);
+      }
     }
   }
 
@@ -210,4 +254,34 @@
     }
   }
 
+
+  /*
+   * The Iframe has no way to understand when the browser is resizing when the iframe has a fixed width
+   * So this lets us know to request the size of the iframe when the browser resizes
+   */
+
+  function watchResizeAndRequestIframeHeight(){
+    var running = false,
+        iframe = document.getElementById('hopo-iframe');
+
+    window.addEventListener('resize', resize, false);
+
+    function requestHeight(){
+      iframe.contentWindow.postMessage('requestSize', '*');
+      running = false;
+    }
+
+    function resize(){
+      if (!running) {
+        running = true;
+        if (window.requestAnimationFrame) {
+          window.requestAnimationFrame(requestHeight);
+        } else {
+          setTimeout(requestHeight, 66);
+        }
+      }
+    }
+  }
+
+  window.Iframe = Iframe;
 })(window);
