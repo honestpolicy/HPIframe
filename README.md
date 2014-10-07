@@ -1,4 +1,4 @@
-# HPIframe
+# HPIframe [![Code Climate](https://codeclimate.com/github/honestpolicy/HPIframe/badges/gpa.svg)](https://codeclimate.com/github/honestpolicy/HPIframe)
 
 The HonesPolicy Iframe gives you access to providing your users with
 easy, instant quotes and an opportunity to connect with you, or one of
