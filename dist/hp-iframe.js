@@ -1,6 +1,6 @@
 /**
  * hp-iframe 
- * @version v0.1.0 
+ * @version v0.1.1 
  * @link https://github.com/honestpolicy/HPIframe.git 
  * @license MIT 
  */ 
@@ -130,33 +130,30 @@
 
     // Load the iframe when the dom is ready
     function onDomReady(){
-      var iframe;
+      var iframe, root;
 
       called = true;
       iframe = document.getElementById('hopo-iframe');
-
-      if (self.automaticResize) {
-        iframe.setAttribute('scrolling', 'no');
-      }
 
       // Throw error if iframe doesnt exist in DOM
       if (!iframe) {
         return console.log("%c You must have an iframe in the DOM with an id of 'hopo-iframe'", "background: black; color: red;");
       }
 
-      // Set the src according to the domain
-      if (self.mode === 'LOCAL') {
-        iframe.src = "http://localhost:3000/iframe/widget?auth_token=" + self.authToken + "&" + self.urlParams + "&post_size=" + self.automaticResize;
-
-      } else if (self.mode === 'LOCALPOW') {
-        iframe.src = "http://hopo.dev/iframe/widget?auth_token=" + self.authToken + "&" + self.urlParams + "&post_size=" + self.automaticResize;
-
-      } else if (self.mode === 'STAGING') {
-        iframe.src = "https://staging.honestpolicy.com/iframe/widget?auth_token=" + self.authToken + "&" + self.urlParams + "&post_size=" + self.automaticResize;
-
-      } else {
-        iframe.src = "https://www.honestpolicy.com/iframe/widget?auth_token=" + self.authToken + "&" + self.urlParams + "&post_size=" + self.automaticResize;
+      // Remove scrolling bars in legacy browsers
+      if (self.automaticResize) {
+        iframe.setAttribute('scrolling', 'no');
       }
+
+      // Set the src according to the domain
+      root = {
+        LOCAL: 'http://localhost:3000/',
+        LOCALPOW: 'http://hopo.dev/',
+        STAGING: 'https://staging.honestpolicy.com/',
+        undefined: 'https://www.honestpolicy.com/'
+      };
+
+      iframe.src = root[self.mode] + "iframe/widget?auth_token=" + self.authToken + "&" + self.urlParams + "&post_size=" + self.automaticResize;
 
       // Remove iframe script
       if (iframeScript.parentNode) {
