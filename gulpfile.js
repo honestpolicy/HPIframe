@@ -7,14 +7,24 @@ var gulp = require('gulp'),
     pkg = require('./bower.json'),
     jasmine = require('gulp-jasmine'),
     prompt = require('prompt'),
-    coffee = require('gulp-coffee'),
     git = require('gulp-git'),
     wait = require('gulp-wait'),
     removeLogs = require('gulp-removelogs'),
-    notify = require('gulp-notify'),
     header = require('gulp-header');
 
 var banner = ['/**', ' * <%= pkg.name %> ', ' * @version v<%= pkg.version %> ', ' * @link <%= pkg.homepage %> ', ' * @license <%= pkg.license %> ', ' */ \n\n'].join("\n");
+
+
+/*
+  Test Tool. This function can be ran at command line by:
+    `gulp test`
+ */
+
+var testCode = function(){
+  gulp.src('./tests/*.js')
+    .pipe(jasmine()); // Run jasmine tests
+}
+
 
 /*
   Default Gulp Task. Can be ran via the following commands.
@@ -36,7 +46,7 @@ var code = function(){
 
     testCode();
   });
-}
+};
 
 /*
   Build Tools. This function can be ran at command line by:
@@ -66,13 +76,16 @@ var buildDist = function(){
   }
 
   // Check if type matches a needed bump version
-  if (bumpTypes.lastIndexOf(bumpType.toLowerCase()) == -1)
+  if (bumpTypes.lastIndexOf(bumpType.toLowerCase()) === -1) {
     return console.log("\nInvalid build type. Must be major, minor, or patch\n");
+  }
 
   prompt.start();
   prompt.get('Confirm Build Process (y/n)', function(err, result){
     result = result[Object.keys(result)[0]]
-    if (result != 'y') return;
+    if (result !== 'y') {
+      return;
+    }
 
     testCode(); // Run Tests
 
@@ -89,7 +102,7 @@ var buildDist = function(){
       .pipe(uglify()) // Uglify && Minify
       .pipe(removeLogs())
       .pipe(rename(pkg.name + '.min.js'))
-      .pipe(gulp.dest('dist'))
+      .pipe(gulp.dest('dist'));
 
     gulp.src('src/*.js')
       .pipe(jshint()) // jslint
@@ -97,7 +110,7 @@ var buildDist = function(){
       .pipe(removeLogs())
       .pipe(header(banner, {pkg: pkg}))
       .pipe(rename(pkg.name + '.js'))
-      .pipe(gulp.dest('dist'))
+      .pipe(gulp.dest('dist'));
 
     // Create Github Release
     if (gutil.env.release){
@@ -113,19 +126,7 @@ var buildDist = function(){
     }
 
   });
-}
-
-/*
-  Test Tool. This function can be ran at command line by:
-    `gulp test`
-
-  It will compile coffeescript jasmine tests and run them
- */
-
-var testCode = function(){
-  gulp.src('./tests/*.js')
-    .pipe(jasmine()); // Run jasmine tests
-}
+};
 
 
 /*
