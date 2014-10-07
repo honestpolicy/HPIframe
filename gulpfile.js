@@ -98,9 +98,9 @@ var buildDist = function(){
     gulp.src('src/*.js')
       .pipe(jshint()) // jslint
       .pipe(jshint.reporter('default'))
-      .pipe(header(banner, {pkg: pkg}))
-      .pipe(uglify()) // Uglify && Minify
       .pipe(removeLogs())
+      .pipe(uglify()) // Uglify && Minify
+      .pipe(header(banner, {pkg: pkg}))
       .pipe(rename(pkg.name + '.min.js'))
       .pipe(gulp.dest('dist'));
 
